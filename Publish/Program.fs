@@ -22,4 +22,4 @@ let publishEvent() =
 let main argv = 
     printfn "%A" <| publishEvent()
     Console.ReadLine() |> ignore
-    0 // return an integer exit code
+    0
