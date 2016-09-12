@@ -61,7 +61,7 @@ module Models =
 
     type EventDetail =
         { Id : Guid
-          Date : DateTime
+          Date : DateTime option
           Description : string
           Location : string
           PublishedDate : DateTime option 
@@ -83,15 +83,12 @@ module DataTransform =
               SpeakerImageUri = speaker.ImageUri
               SpeakerRating = speaker.Rating
               StartDate = session.Date
-              EndDate = session.Date |> Option.map (fun date -> date.AddHours(1.0)) }
+              EndDate = session.Date }
 
     module Event = 
         let toDetail eventSessions (event: Dtos.Event) : Models.EventDetail =
             { Id = event.Id
-              Date = 
-                  match event.Date with
-                  | None -> DateTime.Today
-                  | Some date -> date
+              Date = event.Date
               Description = event.Name
               Location = ""
               PublishedDate = event.PublishedDate
