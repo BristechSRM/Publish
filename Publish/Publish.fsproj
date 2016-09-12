@@ -61,9 +61,7 @@
     <Compile Include="Dtos.fs" />
     <Compile Include="Models.fs" />
     <Compile Include="DataTransform.fs" />
-    <Compile Include="EventsProxy.fs" />
-    <Compile Include="SessionsProxy.fs" />
-    <Compile Include="SpeakersProxy.fs" />
+    <Compile Include="Proxy.fs" />
     <Compile Include="EventsFacade.fs" />
     <Compile Include="MeetupHttpClient.fs" />
     <Compile Include="Program.fs" />

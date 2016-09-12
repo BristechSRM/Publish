@@ -1,14 +1,15 @@
 ﻿module EventsFacade
 
 open DataTransform
+open Proxy
 open System
 
 let getEventDetail (eventId : Guid) = 
-    let record = EventsProxy.getEvent eventId
+    let record = Events.getEvent eventId
 
     let eventSessions = 
-        SessionsProxy.getSessionsByEventId eventId
+        Sessions.getSessionsByEventId eventId
         |> Array.map (fun session -> 
-            let speaker = SpeakersProxy.getSpeaker session.SpeakerId
+            let speaker = Speakers.getSpeaker session.SpeakerId
             Session.toEventSession speaker session)
     Event.toDetail eventSessions record
