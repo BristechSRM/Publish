@@ -94,6 +94,28 @@ module DataTransform =
               PublishedDate = event.PublishedDate
               Sessions = eventSessions }
 
+    module MeetupData = 
+        //Note: Meetup has 80 character limit on title. 
+
+        let private getEventDescription (detail : EventDetail) = 
+            detail.Sessions
+            |> Array.map (fun session -> 
+                sprintf "<b>%s %s - %s</b>\n\n%s\n\n<b>About %s:</b>\n\n%s" 
+                    session.SpeakerForename session.SpeakerSurname session.Title 
+                    session.Description
+                    session.SpeakerForename
+                    session.SpeakerBio)
+            |> String.concat "\n\n"
+            
+
+        let fromEventDetail (detail : EventDetail) =
+            let eventDescription = getEventDescription detail
+            [|
+                new KeyValuePair<string, string>("name", detail.Description)
+                new KeyValuePair<string, string>("description", eventDescription)
+            |] 
+            
+
 module EventsProxy = 
     open Dtos
     open JsonHttpClient
@@ -125,16 +147,13 @@ module EventsFacade =
         Event.toDetail eventSessions record
 
 module MeetupHttpClient = 
-    let publishEvent () = 
+    //http://www.meetup.com/meetup_api/docs/:urlname/events/#create
+    let publishEvent meetupData = 
+        
         use client = new HttpClient()
         let apikey = meetupApiKey
         let uri = Uri <| sprintf "https://api.meetup.com/Bristech-Biztalk/events?&sign=true&key=%s" apikey
-        let contentPairs = 
-            [|
-                new KeyValuePair<string, string>("name","Test event from Publish 1")
-                new KeyValuePair<string, string>("description","Test event from Publish 1")
-            |]
-        use content = new FormUrlEncodedContent(contentPairs)
+        use content = new FormUrlEncodedContent(meetupData)
         use response = client.PostAsync(uri,content).Result
         response.Content.ReadAsStringAsync().Result
 
@@ -147,7 +166,9 @@ let main _ =
     let event = EventsFacade.getEventDetail eventId
     printfn "Event: %A" event
 
-    //Temporarily not publishing event
-    //printfn "%A" <| publishEvent()
+    let meetupData = DataTransform.MeetupData.fromEventDetail event
+
+    let publishResult = MeetupHttpClient.publishEvent meetupData
+    printfn "%A" publishResult
     Console.ReadLine() |> ignore
     0
