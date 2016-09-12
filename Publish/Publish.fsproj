@@ -57,6 +57,15 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Config.fs" />
     <Compile Include="JsonSettings.fs" />
+    <Compile Include="JsonHttpClient.fs" />
+    <Compile Include="Dtos.fs" />
+    <Compile Include="Models.fs" />
+    <Compile Include="DataTransform.fs" />
+    <Compile Include="EventsProxy.fs" />
+    <Compile Include="SessionsProxy.fs" />
+    <Compile Include="SpeakersProxy.fs" />
+    <Compile Include="EventsFacade.fs" />
+    <Compile Include="MeetupHttpClient.fs" />
     <Compile Include="Program.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />
