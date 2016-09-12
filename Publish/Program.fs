@@ -19,21 +19,44 @@ module JsonHttpClient =
             let message = sprintf "Error in get request for %s. Status code: %i. Reason phrase: %s. Error Message: %s" modelName (int (errorCode)) response.ReasonPhrase errorResponse
             failwith message
 
-module Models = 
-    [<CLIMutable>]
+module Dtos = 
     type Event =
         { Id: Guid
           Date: DateTime option
           Name: string 
           PublishedDate : DateTime option } 
 
+    type Session =
+        { Id : Guid
+          Title : string
+          Description : string
+          Status : string
+          Date : DateTime option
+          DateAdded : string
+          SpeakerId : Guid
+          AdminId : Guid option 
+          EventId : Guid option }
+
 module EventsProxy = 
     open JsonHttpClient
-    open Models
-    let getEvent(eventId : Guid) = get<Event> <| new Uri(eventsUri, eventId.ToString())
+    open Dtos
+    let getEvent (eventId : Guid) = get<Event> <| new Uri(eventsUri, eventId.ToString())
+
+module SessionsProxy = 
+    open JsonHttpClient
+    open Dtos
+    let getSessionsByEventId (eventId : Guid) = get<Session []> <| new Uri(sessionsUri, "?eventId=" + eventId.ToString())
+
+module EventsFacade = 
+    let getEventDetail (eventId : Guid) = 
+        let record = EventsProxy.getEvent eventId
+        let sessions = SessionsProxy.getSessionsByEventId eventId
+        printfn "Found Event %A" record
+        printfn "Found Sessions %A" sessions
+        record
 
 module MeetupHttpClient = 
-    let publishEvent() = 
+    let publishEvent () = 
         use client = new HttpClient()
         let apikey = meetupApiKey
         let uri = Uri <| sprintf "https://api.meetup.com/Bristech-Biztalk/events?&sign=true&key=%s" apikey
@@ -42,19 +65,18 @@ module MeetupHttpClient =
                 new KeyValuePair<string, string>("name","Test event from Publish 1")
                 new KeyValuePair<string, string>("description","Test event from Publish 1")
             |]
-        use content = new FormUrlEncodedContent(contentPairs)
-        use response = client.PostAsync(uri,content).Result
-        response.Content.ReadAsStringAsync().Result
+        let content = new FormUrlEncodedContent(contentPairs)
+        let response = client.PostAsync(uri,content).Result
+        let responseContent = response.Content.ReadAsStringAsync().Result
+        responseContent    
 
 [<EntryPoint>]
 let main _ = 
     JsonSettings.setDefaults()
     printfn "Enter event id to publish"
     let eventId = Guid(Console.ReadLine())
-    printfn "Getting Event"
-    let event = EventsProxy.getEvent(eventId)
-    printfn "Found Event"
-    printfn "%A" event
+    printfn "Getting Event Detail"
+    let event = EventsFacade.getEventDetail eventId
 
     //Temporarily not publishing event
     //printfn "%A" <| publishEvent()

@@ -15,3 +15,4 @@ let getUri (key : string) = getString key |> Uri
 let meetupApiKey = getString "MeetupApiKey"
 let sessionsServiceUri = getUri "SessionsServiceUrl"
 let eventsUri = Uri (sessionsServiceUri, "events/")
+let sessionsUri = Uri (sessionsServiceUri, "sessions/")
