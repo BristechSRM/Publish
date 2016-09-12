@@ -37,23 +37,37 @@ module Dtos =
           AdminId : Guid option 
           EventId : Guid option }
 
+    type Speaker =
+        { Id : Guid
+          Forename : string
+          Surname : string
+          Rating : int
+          ImageUri : string
+          Bio : string }
+
+open JsonHttpClient
+open Dtos
+
 module EventsProxy = 
-    open JsonHttpClient
-    open Dtos
     let getEvent (eventId : Guid) = get<Event> <| new Uri(eventsUri, eventId.ToString())
 
 module SessionsProxy = 
-    open JsonHttpClient
-    open Dtos
     let getSessionsByEventId (eventId : Guid) = get<Session []> <| new Uri(sessionsUri, "?eventId=" + eventId.ToString())
+
+module SpeakersProxy = 
+    let getSpeaker (profileId : Guid) = get<Speaker> <| new Uri(profilesUri, profileId.ToString())
 
 module EventsFacade = 
     let getEventDetail (eventId : Guid) = 
         let record = EventsProxy.getEvent eventId
-        let sessions = SessionsProxy.getSessionsByEventId eventId
+        let eventSessions = 
+            SessionsProxy.getSessionsByEventId eventId
+            |> Array.map (fun session -> 
+                let speaker = SpeakersProxy.getSpeaker session.SpeakerId
+                (session,speaker) )
         printfn "Found Event %A" record
-        printfn "Found Sessions %A" sessions
-        record
+        printfn "Found Sessions %A" eventSessions
+        (record, eventSessions)
 
 module MeetupHttpClient = 
     let publishEvent () = 
