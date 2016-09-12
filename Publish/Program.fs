@@ -45,29 +45,87 @@ module Dtos =
           ImageUri : string
           Bio : string }
 
-open JsonHttpClient
-open Dtos
+module Models =
+    type EventSession =
+        { Id : Guid
+          Title : string
+          Description : string
+          SpeakerId : Guid
+          SpeakerForename : string
+          SpeakerSurname : string
+          SpeakerBio : string
+          SpeakerImageUri : string
+          SpeakerRating : int
+          StartDate : DateTime option
+          EndDate : DateTime option }
+
+    type EventDetail =
+        { Id : Guid
+          Date : DateTime
+          Description : string
+          Location : string
+          PublishedDate : DateTime option 
+          Sessions : EventSession[] }
+
+module DataTransform = 
+    open Dtos
+    open Models
+
+    module Session = 
+        let toEventSession (speaker : Dtos.Speaker) (session : Dtos.Session) : Models.EventSession = 
+            { Id = session.Id
+              Title = session.Title
+              Description = session.Description
+              SpeakerId = speaker.Id
+              SpeakerForename = speaker.Forename
+              SpeakerSurname = speaker.Surname
+              SpeakerBio = speaker.Bio
+              SpeakerImageUri = speaker.ImageUri
+              SpeakerRating = speaker.Rating
+              StartDate = session.Date
+              EndDate = session.Date |> Option.map (fun date -> date.AddHours(1.0)) }
+
+    module Event = 
+        let toDetail eventSessions (event: Dtos.Event) : Models.EventDetail =
+            { Id = event.Id
+              Date = 
+                  match event.Date with
+                  | None -> DateTime.Today
+                  | Some date -> date
+              Description = event.Name
+              Location = ""
+              PublishedDate = event.PublishedDate
+              Sessions = eventSessions }
 
 module EventsProxy = 
+    open Dtos
+    open JsonHttpClient
+    
     let getEvent (eventId : Guid) = get<Event> <| new Uri(eventsUri, eventId.ToString())
 
 module SessionsProxy = 
+    open JsonHttpClient
+    open Dtos
+
     let getSessionsByEventId (eventId : Guid) = get<Session []> <| new Uri(sessionsUri, "?eventId=" + eventId.ToString())
 
 module SpeakersProxy = 
+    open JsonHttpClient
+    open Dtos
+
     let getSpeaker (profileId : Guid) = get<Speaker> <| new Uri(profilesUri, profileId.ToString())
 
 module EventsFacade = 
+    open DataTransform
+
     let getEventDetail (eventId : Guid) = 
         let record = EventsProxy.getEvent eventId
         let eventSessions = 
             SessionsProxy.getSessionsByEventId eventId
             |> Array.map (fun session -> 
                 let speaker = SpeakersProxy.getSpeaker session.SpeakerId
-                (session,speaker) )
-        printfn "Found Event %A" record
-        printfn "Found Sessions %A" eventSessions
-        (record, eventSessions)
+                Session.toEventSession speaker session)
+        Event.toDetail eventSessions record
 
 module MeetupHttpClient = 
     let publishEvent () = 
@@ -79,10 +137,9 @@ module MeetupHttpClient =
                 new KeyValuePair<string, string>("name","Test event from Publish 1")
                 new KeyValuePair<string, string>("description","Test event from Publish 1")
             |]
-        let content = new FormUrlEncodedContent(contentPairs)
-        let response = client.PostAsync(uri,content).Result
-        let responseContent = response.Content.ReadAsStringAsync().Result
-        responseContent    
+        use content = new FormUrlEncodedContent(contentPairs)
+        use response = client.PostAsync(uri,content).Result
+        response.Content.ReadAsStringAsync().Result
 
 [<EntryPoint>]
 let main _ = 
@@ -91,6 +148,7 @@ let main _ =
     let eventId = Guid(Console.ReadLine())
     printfn "Getting Event Detail"
     let event = EventsFacade.getEventDetail eventId
+    printfn "Event: %A" event
 
     //Temporarily not publishing event
     //printfn "%A" <| publishEvent()
