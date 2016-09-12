@@ -3,11 +3,15 @@
 open System
 open System.Configuration
 
-let getConfigValue (key : string) = 
+let getString (key : string) = 
     let value = ConfigurationManager.AppSettings.Item(key)
     if String.IsNullOrWhiteSpace value then
         failwith <| sprintf "Missing configuration value: %s" key
     else 
         value
 
-let meetupApiKey = getConfigValue "MeetupApiKey"
+let getUri (key : string) = getString key |> Uri
+
+let meetupApiKey = getString "MeetupApiKey"
+let sessionsServiceUri = getUri "SessionsServiceUrl"
+let eventsUri = Uri (sessionsServiceUri, "events/")
