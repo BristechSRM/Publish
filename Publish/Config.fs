@@ -10,4 +10,8 @@ let getConfigValue (key : string) =
     else 
         value
 
+let getUriConfigValue (key : string) = getConfigValue key |> Uri
+
 let meetupApiKey = getConfigValue "MeetupApiKey"
+let sessionsServiceUri = getUriConfigValue "SessionsServiceUrl"
+let eventsUri = Uri (sessionsServiceUri, "events/")
