@@ -6,21 +6,15 @@ open Serilog
 open Startup
 open Config
 
+(*
+    Do not run Visual Studio as Administrator!
+
+    Open a command prompt as Administrator and run the following command, replacing username with your username, and the port number that you have selected in config
+    netsh http add urlacl url=http://*:8080/ user=username
+*)
 [<EntryPoint>]
 let main _ = 
     JsonSettings.setDefaults()
-
-    //TODO meetupPublish controller
-    //    printfn "Enter event id to publish"
-    //    let eventId = Guid(Console.ReadLine())
-    //    printfn "Getting Event Detail"
-    //    let event = EventsFacade.getEventDetail eventId
-    //    printfn "Event: %A" event
-    //
-    //    let meetupData = DataTransform.MeetupData.fromEventDetail event
-    //
-    //    let publishResult = MeetupHttpClient.publishEvent meetupData
-    //    printfn "%A" publishResult
 
     use server = WebApp.Start<Startup>(baseUrl)
     Log.Information("Listening on {0}", baseUrl)
