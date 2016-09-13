@@ -65,6 +65,7 @@
     <Compile Include="Proxy.fs" />
     <Compile Include="EventsFacade.fs" />
     <Compile Include="MeetupHttpClient.fs" />
+    <Compile Include="PublishController.fs" />
     <Compile Include="LogHttpMiddleware.fs" />
     <Compile Include="LogExceptionHandler.fs" />
     <Compile Include="Logging.fs" />
