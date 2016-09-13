@@ -13,6 +13,7 @@ let getString (key : string) =
 let getUri (key : string) = getString key |> Uri
 
 let meetupApiKey = getString "MeetupApiKey"
+let meetupTargetGroup = getString "MeetupTargetGroup"
 
 let baseUrl = getString "BaseUrl"
 
