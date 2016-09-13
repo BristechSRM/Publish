@@ -58,10 +58,11 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Config.fs" />
     <Compile Include="JsonSettings.fs" />
-    <Compile Include="JsonHttpClient.fs" />
+    <Compile Include="RestModels.fs" />
     <Compile Include="Dtos.fs" />
     <Compile Include="Models.fs" />
     <Compile Include="DataTransform.fs" />
+    <Compile Include="JsonHttpClient.fs" />
     <Compile Include="Proxy.fs" />
     <Compile Include="EventsFacade.fs" />
     <Compile Include="MeetupHttpClient.fs" />

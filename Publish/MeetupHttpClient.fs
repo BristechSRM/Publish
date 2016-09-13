@@ -15,6 +15,7 @@ let publishEvent meetupData =
     match response.StatusCode with
     | HttpStatusCode.Created -> 
         //TODO choose what we want from response and JsonConvert
+        //Do todo here or in PublishController?
         response.Content.ReadAsStringAsync().Result
     | errorCode -> 
         let errorResponse = response.Content.ReadAsStringAsync().Result
