@@ -8,6 +8,12 @@ If you want to test the build before something is in master,
 you'll need to change dockerBuildPublish to clone a branch instead of master. The command for this is
 `git clone --depth 1 -b my-branch https://github.com/BristechSRM/Publish.git $DIR/source`
 
-## pushing to docker
-To push to docker, you'll need the login for the bristechsrm docker user, and to see the instructions here: 
+## Pushing to docker
+Make sure the image has been created correctly with a recent created time
+`docker images publish:latest`
+
+Now simply perform `docker login` with the credentials for bristechsrm and then run 
+`docker push bristechsrm/publish`
+
+Further details can be found here: 
 https://docs.docker.com/engine/getstarted/step_six/ 
