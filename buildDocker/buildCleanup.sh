@@ -2,6 +2,6 @@
 DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 echo $DIR
 
-sudo rm -rf $DIR/source
-sudo rm -rf $DIR/binaries
-sudo rm -rf $DIR/context
+rm -rf $DIR/source
+rm -rf $DIR/binaries
+rm -rf $DIR/context
