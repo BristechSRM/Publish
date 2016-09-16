@@ -19,3 +19,6 @@ cp $DIR/Dockerfile $DIR/context/Dockerfile
 cp -R $DIR/binaries/ $DIR/context/
 cd $DIR/context/
 docker build -t publish . 
+IMAGEID=$(docker images publish:latest -q)
+docker tag $IMAGEID bristechsrm/publish:latest
+
