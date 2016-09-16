@@ -13,7 +13,7 @@ git clone --depth 1 https://github.com/BristechSRM/Publish.git $DIR/source
 
 docker run -v $DIR/source:/source \
     -v $DIR/binaries:/binaries \
-    bristechsrm/build-fsharp /source/buildDocker/buildPublish.sh
+    bristechsrm/build-fsharp /source/buildDocker/fsharpBuild.sh
 
 cp $DIR/Dockerfile $DIR/context/Dockerfile
 cp -R $DIR/binaries/ $DIR/context/
