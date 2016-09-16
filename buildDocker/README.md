@@ -1,5 +1,5 @@
 #Building the publish service 
-To build, copy the contents of this folder to an empty directory on a linux VM. 
+To build, copy the contents of this folder to an empty directory on a linux VM. The VM must have docker installed.  
 If you are already on linux, no need to do anything. 
 
 Then simply run `./dockerBuildPublish.sh` to build the docker image for publish from the latest master.
