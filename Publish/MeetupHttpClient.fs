@@ -1,6 +1,8 @@
 ﻿module MeetupHttpClient
 
 open Config
+open Newtonsoft.Json
+open MeetupModels
 open System
 open System.Net
 open System.Net.Http
@@ -18,9 +20,8 @@ let publishEvent meetupData =
     use response = client.PostAsync(uri, content).Result
     match response.StatusCode with
     | HttpStatusCode.Created -> 
-        //TODO choose what we want from response and JsonConvert
-        //Do todo here or in PublishController?
-        response.Content.ReadAsStringAsync().Result
+        let json = response.Content.ReadAsStringAsync().Result
+        JsonConvert.DeserializeObject<EventCreateResponse>(json)
     | errorCode -> 
         let errorResponse = response.Content.ReadAsStringAsync().Result
         let message = sprintf "Error in post request to publish event to Meetup. Status code: %i. Reason phrase: %s. Error Message: %s" (int (errorCode)) response.ReasonPhrase errorResponse

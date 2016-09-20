@@ -7,12 +7,15 @@ open JsonHttpClient
 open System
 
 module Events =
-    let getEvent (eventId : Guid) = get<Event> <| new Uri(eventsUri, eventId.ToString())
+    let get (eventId : Guid) = get<Event> <| new Uri(eventsUri, eventId.ToString())
 
-    let patchEvent (eventId : Guid) (op : PatchOp) = patch eventsUri eventId op
+    let patch (eventId : Guid) (op : PatchOp) = patch eventsUri eventId op
+
+module MeetupEvents = 
+    let post (meetup: MeetupEvent) = postAndGetGuid meetupEventsUri meetup
 
 module Sessions = 
-    let getSessionsByEventId (eventId : Guid) = get<Session []> <| new Uri(sessionsUri, "?eventId=" + eventId.ToString())
+    let getByEventIds (eventId : Guid) = get<Session []> <| new Uri(sessionsUri, "?eventId=" + eventId.ToString())
 
 module Speakers = 
-    let getSpeaker (profileId : Guid) = get<Speaker> <| new Uri(profilesUri, profileId.ToString())
+    let get (profileId : Guid) = get<Speaker> <| new Uri(profilesUri, profileId.ToString())

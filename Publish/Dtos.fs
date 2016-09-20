@@ -26,3 +26,10 @@ type Speaker =
       Rating : int
       ImageUri : string
       Bio : string }
+
+type MeetupEvent = 
+    { Id : Guid
+      EventId : Guid
+      MeetupId : string
+      PublishedDate : DateTime option
+      MeetupUrl : string }

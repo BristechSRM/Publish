@@ -5,11 +5,11 @@ open Proxy
 open System
 
 let getEventDetail (eventId : Guid) = 
-    let record = Events.getEvent eventId
+    let record = Events.get eventId
 
     let eventSessions = 
-        Sessions.getSessionsByEventId eventId
+        Sessions.getByEventIds eventId
         |> Array.map (fun session -> 
-            let speaker = Speakers.getSpeaker session.SpeakerId
+            let speaker = Speakers.get session.SpeakerId
             Session.toEventSession speaker session)
     Event.toDetail eventSessions record
