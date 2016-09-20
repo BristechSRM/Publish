@@ -20,5 +20,4 @@ type EventDetail =
       Date : DateTime option
       Description : string
       Location : string
-      PublishedDate : DateTime option
       Sessions : EventSession [] }
