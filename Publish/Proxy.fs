@@ -11,6 +11,9 @@ module Events =
 
     let patch (eventId : Guid) (op : PatchOp) = patch eventsUri eventId op
 
+module MeetupEvents = 
+    let post (meetup: MeetupEvent) = postAndGetGuid meetupEventsUri meetup
+
 module Sessions = 
     let getByEventIds (eventId : Guid) = get<Session []> <| new Uri(sessionsUri, "?eventId=" + eventId.ToString())
 

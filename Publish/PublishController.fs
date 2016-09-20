@@ -1,7 +1,7 @@
 ﻿namespace Controllers
 
 open Proxy
-open Models
+open Dtos
 open RestModels
 open System
 open System.Net
@@ -16,7 +16,11 @@ type PublishController() =
         let event = EventsFacade.getEventDetail eventId
         let meetupData = DataTransform.MeetupData.fromEventDetail event
         let publishResult = MeetupHttpClient.publishEvent meetupData
-        Events.patch event.Id { Path = "publisheddate"
-                                     Value = DateTime.UtcNow |> convertToISO8601 }
-        //TODO respond with useful information from meetup response
-        x.Request.CreateResponse(HttpStatusCode.NoContent)
+        let meetupEvent = 
+                { Id = Guid.Empty
+                  EventId = event.Id
+                  MeetupId = "" 
+                  PublishedDate = Some DateTime.UtcNow
+                  MeetupUrl = "" }
+        let meetupEventId = MeetupEvents.post meetupEvent
+        x.Request.CreateResponse(HttpStatusCode.Created,meetupEventId)

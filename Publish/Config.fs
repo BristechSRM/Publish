@@ -22,3 +22,4 @@ let sessionsServiceUri = getUri "SessionsServiceUrl"
 let eventsUri = Uri (sessionsServiceUri, "events/")
 let profilesUri = Uri (sessionsServiceUri, "profiles/")
 let sessionsUri = Uri (sessionsServiceUri, "sessions/")
+let meetupEventsUri = Uri (sessionsServiceUri, "meetupevents/")
