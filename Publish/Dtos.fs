@@ -5,8 +5,7 @@ open System
 type Event =
     { Id: Guid
       Date: DateTime option
-      Name: string 
-      PublishedDate : DateTime option } 
+      Name: string } 
 
 type Session =
     { Id : Guid

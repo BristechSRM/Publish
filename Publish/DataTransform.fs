@@ -24,7 +24,6 @@ module Event =
           Date = event.Date
           Description = event.Name
           Location = ""
-          PublishedDate = event.PublishedDate
           Sessions = eventSessions }
 
 module MeetupData = 
