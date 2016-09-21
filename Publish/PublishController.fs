@@ -31,6 +31,6 @@ type PublishController() =
 
     member x.Delete(meetupEventId : Guid) = 
         let meetupEvent = MeetupEvents.get meetupEventId
-        let event = Events.get meetupEvent.EventId
         MeetupHttpClient.deleteEvent meetupEvent.MeetupId
+        MeetupEvents.delete meetupEventId
         x.Request.CreateResponse(HttpStatusCode.NoContent)
