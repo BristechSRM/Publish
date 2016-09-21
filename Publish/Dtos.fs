@@ -5,24 +5,21 @@ open System
 type Event =
     { Id: Guid
       Date: DateTime option
-      Name: string } 
+      Name: string 
+      MeetupEventId : Guid option} 
 
 type Session =
     { Id : Guid
       Title : string
       Description : string
-      Status : string
       Date : DateTime option
-      DateAdded : string
       SpeakerId : Guid
-      AdminId : Guid option 
       EventId : Guid option }
 
 type Speaker =
     { Id : Guid
       Forename : string
       Surname : string
-      Rating : int
       ImageUri : string
       Bio : string }
 
