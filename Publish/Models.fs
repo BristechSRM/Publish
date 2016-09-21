@@ -10,14 +10,11 @@ type EventSession =
       SpeakerForename : string
       SpeakerSurname : string
       SpeakerBio : string
-      SpeakerImageUri : string
-      SpeakerRating : int
-      StartDate : DateTime option
-      EndDate : DateTime option }
+      SpeakerImageUri : string }
 
 type EventDetail = 
     { Id : Guid
       Date : DateTime option
       Description : string
-      Location : string
+      MeetupEventId : Guid option
       Sessions : EventSession [] }

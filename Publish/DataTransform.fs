@@ -13,17 +13,14 @@ module Session =
           SpeakerForename = speaker.Forename
           SpeakerSurname = speaker.Surname
           SpeakerBio = speaker.Bio
-          SpeakerImageUri = speaker.ImageUri
-          SpeakerRating = speaker.Rating
-          StartDate = session.Date
-          EndDate = session.Date }
+          SpeakerImageUri = speaker.ImageUri }
     
 module Event = 
     let toDetail eventSessions (event : Dtos.Event) : Models.EventDetail = 
         { Id = event.Id
           Date = event.Date
           Description = event.Name
-          Location = ""
+          MeetupEventId = event.MeetupEventId
           Sessions = eventSessions }
 
 module MeetupData = 
