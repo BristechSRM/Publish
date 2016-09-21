@@ -9,6 +9,7 @@ open System.Web.Http
 
 type PublishController() = 
     inherit ApiController()
+
     member x.Post(eventId : Guid) = 
         let event = EventsFacade.getEventDetail eventId
         match event.MeetupEventId with
@@ -28,3 +29,8 @@ type PublishController() =
             let meetupEventId = MeetupEvents.post meetupEvent
             x.Request.CreateResponse(HttpStatusCode.Created, meetupEventId)
 
+    member x.Delete(meetupEventId : Guid) = 
+        let meetupEvent = MeetupEvents.get meetupEventId
+        let event = Events.get meetupEvent.EventId
+        MeetupHttpClient.deleteEvent meetupEvent.MeetupId
+        x.Request.CreateResponse(HttpStatusCode.NoContent)
