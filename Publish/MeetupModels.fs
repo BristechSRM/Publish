@@ -1,5 +1,7 @@
 ﻿module MeetupModels
 
-type EventCreateResponse = 
+type MeetupEventData = 
     { Id : string 
-      Link : string }
+      Name : string
+      Link : string 
+      Status : string }

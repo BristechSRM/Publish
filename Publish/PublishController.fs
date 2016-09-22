@@ -31,13 +31,18 @@ type PublishController() =
 
     member x.Delete(meetupEventId : Guid) = 
         let meetupEvent = MeetupEvents.get meetupEventId
-        MeetupHttpClient.deleteEvent meetupEvent.MeetupId
-        MeetupEvents.delete meetupEventId
-        x.Request.CreateResponse(HttpStatusCode.NoContent)
+        let remoteMeetupEvent = MeetupHttpClient.getEvent meetupEvent.MeetupId
+        match remoteMeetupEvent.Status.ToLowerInvariant() with
+        | "draft" -> 
+            MeetupHttpClient.deleteEvent meetupEvent.MeetupId
+            MeetupEvents.delete meetupEventId
+            x.Request.CreateResponse(HttpStatusCode.NoContent)
+        | _ -> 
+            x.Request.CreateErrorResponse(HttpStatusCode.Conflict, sprintf "Event \"%s\" is not a draft. It's status is: \"%s\".  It cannot be deleted from SRM." remoteMeetupEvent.Name remoteMeetupEvent.Status)
 
     member x.Put(meetupEventId : Guid) = 
         let meetupEvent = MeetupEvents.get meetupEventId
         let event = EventsFacade.getEventDetail meetupEvent.EventId
-        MeetupHttpClient.updateEvent meetupEvent.MeetupId event
+        let result = MeetupHttpClient.updateEvent meetupEvent.MeetupId event
         MeetupEvents.patch meetupEventId { Path = "PublishedDate"; Value = DateTime.UtcNow.ToString ( "o", System.Globalization.CultureInfo.InvariantCulture ) }
         x.Request.CreateResponse(HttpStatusCode.NoContent)
