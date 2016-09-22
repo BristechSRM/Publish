@@ -8,6 +8,19 @@ open System.Net
 open System.Net.Http
 open System.Collections.Generic
 
+let getEvent remoteMeetupEventId = 
+    use client = new HttpClient()
+    let uri = Uri <| sprintf "https://api.meetup.com/%s/events/%s?sign=true&key=%s" meetupTargetGroup remoteMeetupEventId meetupApiKey
+    use response = client.GetAsync(uri).Result
+    match response.StatusCode with
+    | HttpStatusCode.OK -> 
+        let json = response.Content.ReadAsStringAsync().Result
+        JsonConvert.DeserializeObject<MeetupEventData>(json)
+    | errorCode -> 
+        let errorMessage = response.Content.ReadAsStringAsync().Result
+        let message = sprintf "Error in get request for event.on Meetup. MeetupEventId: %s. Status code: %i. Reason phrase: %s. Error Message: %s" remoteMeetupEventId (int (errorCode)) response.ReasonPhrase errorMessage
+        failwith message
+
 //http://www.meetup.com/meetup_api/docs/:urlname/events/#create
 let publishEvent event = 
     use client = new HttpClient()
@@ -23,7 +36,7 @@ let publishEvent event =
     match response.StatusCode with
     | HttpStatusCode.Created -> 
         let json = response.Content.ReadAsStringAsync().Result
-        JsonConvert.DeserializeObject<EventCreateResponse>(json)
+        JsonConvert.DeserializeObject<MeetupEventData>(json)
     | errorCode -> 
         let errorMessage = response.Content.ReadAsStringAsync().Result
         let message = sprintf "Error in post request to publish event to Meetup. Status code: %i. Reason phrase: %s. Error Message: %s" (int (errorCode)) response.ReasonPhrase errorMessage
@@ -48,7 +61,7 @@ let updateEvent remoteMeetupEventId event =
     let message = new HttpRequestMessage(new HttpMethod("PATCH"), uri, Content = content)
     use response = client.SendAsync(message).Result
     match response.StatusCode with
-    | HttpStatusCode.NoContent -> ()
+    | HttpStatusCode.OK -> response.Content.ReadAsStringAsync().Result
     | errorCode -> 
         let errorMessage = response.Content.ReadAsStringAsync().Result
         let message = sprintf "Error in request to patch event on Meetup. Status code: %i. Reason phrase: %s. Error Message: %s" (int (errorCode)) response.ReasonPhrase errorMessage
