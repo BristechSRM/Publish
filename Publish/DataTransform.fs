@@ -26,7 +26,7 @@ module Event =
 module MeetupData = 
     //Note: Meetup has 80 character limit on title. 
 
-    let private getEventDescription (detail : EventDetail) = 
+    let getEventDescription (detail : EventDetail) = 
         detail.Sessions
         |> Array.map (fun session -> 
             sprintf "<b>%s %s - %s</b>\n\n%s\n\n<b>About %s:</b>\n\n%s" 
@@ -37,6 +37,5 @@ module MeetupData =
         |> String.concat "\n\n"            
 
     let fromEventDetail (detail : EventDetail) = 
-        let eventDescription = getEventDescription detail
         [| new KeyValuePair<string, string>("name", detail.Description)
-           new KeyValuePair<string, string>("description", eventDescription) |] 
+           new KeyValuePair<string, string>("description", getEventDescription detail) |] 

@@ -18,6 +18,8 @@ module MeetupEvents =
 
     let delete (meetupEventId : Guid) = delete <| new Uri(meetupEventsUri, meetupEventId.ToString())
 
+    let patch (meetupEventId : Guid) (op : PatchOp) = patch meetupEventsUri meetupEventId op
+
 module Sessions = 
     let getByEventIds (eventId : Guid) = get<Session []> <| new Uri(sessionsUri, "?eventId=" + eventId.ToString())
 

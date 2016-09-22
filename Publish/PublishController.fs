@@ -1,6 +1,7 @@
 ﻿namespace Controllers
 
 open Dtos
+open RestModels
 open Proxy
 open System
 open System.Net
@@ -16,8 +17,7 @@ type PublishController() =
         | Some _ -> 
             x.Request.CreateErrorResponse(HttpStatusCode.Conflict, "Event has already been published")
         | None -> 
-            let meetupData = DataTransform.MeetupData.fromEventDetail event
-            let result = MeetupHttpClient.publishEvent meetupData
+            let result = MeetupHttpClient.publishEvent event
         
             let meetupEvent = 
                 { Id = Guid.Empty
@@ -33,4 +33,11 @@ type PublishController() =
         let meetupEvent = MeetupEvents.get meetupEventId
         MeetupHttpClient.deleteEvent meetupEvent.MeetupId
         MeetupEvents.delete meetupEventId
+        x.Request.CreateResponse(HttpStatusCode.NoContent)
+
+    member x.Put(meetupEventId : Guid) = 
+        let meetupEvent = MeetupEvents.get meetupEventId
+        let event = EventsFacade.getEventDetail meetupEvent.EventId
+        MeetupHttpClient.updateEvent meetupEvent.MeetupId event
+        MeetupEvents.patch meetupEventId { Path = "PublishedDate"; Value = DateTime.UtcNow.ToString ( "o", System.Globalization.CultureInfo.InvariantCulture ) }
         x.Request.CreateResponse(HttpStatusCode.NoContent)
