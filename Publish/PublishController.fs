@@ -17,8 +17,7 @@ type PublishController() =
         | Some _ -> 
             x.Request.CreateErrorResponse(HttpStatusCode.Conflict, "Event has already been published")
         | None -> 
-            let meetupData = DataTransform.MeetupData.fromEventDetail event
-            let result = MeetupHttpClient.publishEvent meetupData
+            let result = MeetupHttpClient.publishEvent event
         
             let meetupEvent = 
                 { Id = Guid.Empty

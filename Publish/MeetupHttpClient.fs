@@ -9,9 +9,10 @@ open System.Net.Http
 open System.Collections.Generic
 
 //http://www.meetup.com/meetup_api/docs/:urlname/events/#create
-let publishEvent meetupData = 
+let publishEvent event = 
     use client = new HttpClient()
     let uri = Uri <| sprintf "https://api.meetup.com/%s/events?sign=true" meetupTargetGroup
+    let meetupData = DataTransform.MeetupData.fromEventDetail event
     let eventCreationData = 
         [| new KeyValuePair<string,string>("key", meetupApiKey)
            new KeyValuePair<string,string>("announce","false")
