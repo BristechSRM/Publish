@@ -29,13 +29,27 @@ let publishEvent event =
         let message = sprintf "Error in post request to publish event to Meetup. Status code: %i. Reason phrase: %s. Error Message: %s" (int (errorCode)) response.ReasonPhrase errorMessage
         failwith message
 
-let deleteEvent meetupEventId =
+let deleteEvent remoteMeetupEventId =
     use client = new HttpClient()
-    let uri = Uri <| sprintf "https://api.meetup.com/%s/events/%s?sign=true&key=%s" meetupTargetGroup meetupEventId meetupApiKey
+    let uri = Uri <| sprintf "https://api.meetup.com/%s/events/%s?sign=true&key=%s" meetupTargetGroup remoteMeetupEventId meetupApiKey
     use response = client.DeleteAsync(uri).Result
     match response.StatusCode with
     | HttpStatusCode.NoContent -> ()
     | errorCode -> 
         let errorMessage = response.Content.ReadAsStringAsync().Result
         let message = sprintf "Error in request to delete event to Meetup. Status code: %i. Reason phrase: %s. Error Message: %s" (int (errorCode)) response.ReasonPhrase errorMessage
+        failwith message
+
+let updateEvent remoteMeetupEventId event = 
+    use client = new HttpClient()
+    let uri = Uri <| sprintf "https://api.meetup.com/%s/events/%s?sign=true&key=%s" meetupTargetGroup remoteMeetupEventId meetupApiKey
+    let meetupData = DataTransform.MeetupData.fromEventDetail event
+    let content = new FormUrlEncodedContent(meetupData)
+    let message = new HttpRequestMessage(new HttpMethod("PATCH"), uri, Content = content)
+    use response = client.SendAsync(message).Result
+    match response.StatusCode with
+    | HttpStatusCode.NoContent -> ()
+    | errorCode -> 
+        let errorMessage = response.Content.ReadAsStringAsync().Result
+        let message = sprintf "Error in request to patch event on Meetup. Status code: %i. Reason phrase: %s. Error Message: %s" (int (errorCode)) response.ReasonPhrase errorMessage
         failwith message

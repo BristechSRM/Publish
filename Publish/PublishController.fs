@@ -37,5 +37,7 @@ type PublishController() =
 
     member x.Put(meetupEventId : Guid) = 
         let meetupEvent = MeetupEvents.get meetupEventId
+        let event = EventsFacade.getEventDetail meetupEvent.EventId
+        MeetupHttpClient.updateEvent meetupEvent.MeetupId event
         MeetupEvents.patch meetupEventId { Path = "PublishedDate"; Value = DateTime.UtcNow.ToString ( "o", System.Globalization.CultureInfo.InvariantCulture ) }
         x.Request.CreateResponse(HttpStatusCode.NoContent)
