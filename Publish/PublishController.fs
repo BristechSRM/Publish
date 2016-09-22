@@ -1,6 +1,7 @@
 ﻿namespace Controllers
 
 open Dtos
+open RestModels
 open Proxy
 open System
 open System.Net
@@ -33,4 +34,9 @@ type PublishController() =
         let meetupEvent = MeetupEvents.get meetupEventId
         MeetupHttpClient.deleteEvent meetupEvent.MeetupId
         MeetupEvents.delete meetupEventId
+        x.Request.CreateResponse(HttpStatusCode.NoContent)
+
+    member x.Put(meetupEventId : Guid) = 
+        let meetupEvent = MeetupEvents.get meetupEventId
+        MeetupEvents.patch meetupEventId { Path = "PublishedDate"; Value = DateTime.UtcNow.ToString ( "o", System.Globalization.CultureInfo.InvariantCulture ) }
         x.Request.CreateResponse(HttpStatusCode.NoContent)
