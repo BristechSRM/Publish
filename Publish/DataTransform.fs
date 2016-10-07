@@ -3,6 +3,7 @@
 open Dtos
 open Models
 open System.Collections.Generic
+open System
 
 module Session = 
     let toEventSession (speaker : Dtos.Speaker) (session : Dtos.Session) : Models.EventSession = 
@@ -34,8 +35,17 @@ module MeetupData =
                 session.Description
                 session.SpeakerForename
                 session.SpeakerBio)
-        |> String.concat "\n\n"            
+        |> String.concat "\n\n"  
+        
+    let private epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+    let private toUnixTime (dateTime : DateTime) = (dateTime.ToUniversalTime() - epoch).TotalMilliseconds          
 
     let fromEventDetail (detail : EventDetail) = 
-        [| new KeyValuePair<string, string>("name", detail.Description)
-           new KeyValuePair<string, string>("description", getEventDescription detail) |] 
+        let coreDetails = 
+            [| new KeyValuePair<string, string>("name", detail.Description)
+               new KeyValuePair<string, string>("description", getEventDescription detail) |] 
+        match detail.Date with 
+        | None -> coreDetails
+        | Some meetupDate -> 
+            let unixMilisecondDate = meetupDate |> toUnixTime |> int64
+            [| new KeyValuePair<string, string>("time", unixMilisecondDate.ToString()) |] |> Array.append coreDetails
